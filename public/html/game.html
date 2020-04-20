@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Temple Of Doom</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, shrink-to-fit=no">
+
+
+	<style type="text/css">
+
+		* {
+			margin: 0px;
+			padding: 0px;
+			font-weight: 100;
+		}
+
+		body {
+			overflow: hidden;
+			font-family: custom;
+		}
+
+		@font-face {
+			font-family: custom;
+			src: url(./assets/Golden_Age.ttf);
+		}
+
+		@font-face {
+			font-family: custombold;
+			src: url(./assets/Golden_Age_Shad.ttf);
+		}
+		
+		#world {
+			height: 100%;
+			width: 100%;
+			background-color: #8a8065;
+		}
+
+		#inventory {
+			position: fixed;
+			margin: 20px;
+			padding-left: 5px;
+			display: none;
+			flex-direction: row-reverse;
+			background-color: white;
+		}
+
+			.inventory-item {
+				position: relative;
+				height: 80px;
+				width: 80px;
+				margin: 5px 5px 5px 0px;
+				text-align: center;
+
+			}
+
+			#inventory-count {
+				position: relative;
+				top: 50%;
+				transform: translateY(-50%);
+				font-family: custombold;
+				font-size: 1.3em;
+			}
+
+			.add-inventory {
+				animation: add_inventory 0.7s linear 1 ;
+			}
+
+			@keyframes add_inventory {
+				0% {
+					background-color: white;
+				}
+				10% {
+					background-color: #1db01a;
+				}
+				20% {
+					background-color: white;
+				}
+				30% {
+					background-color: #1db01a;
+				}
+				40% {
+					background-color: white;
+				}
+				50% {
+					background-color: #1db01a;
+				}
+				60% {
+					background-color: white;
+				}
+				70% {
+					background-color: #1db01a;
+				}
+				80% {
+					background-color: white;
+				}
+				90% {
+					background-color: #1db01a;
+				}
+				100% {
+					background-color: white;
+				}
+			}
+
+
+		.overlay {
+			position: fixed;
+			height: 100%;
+			width: 100%;
+			background-color: black;
+		}
+
+			.bloc {
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				text-align: center;
+				color: white;
+				cursor: default;
+			}
+
+				#back-container {
+					display: flex;
+					justify-content: center;
+				}
+
+					#back-button {
+						margin-right: 50px;
+						display: none;
+					}
+
+						#back-button>p {
+							border-style: solid;
+							border-width: 2px;
+							padding: 15px 20px 15px 20px;
+						}
+
+						#back-button>p:hover {
+							background-color: white;
+							color: black;
+						}
+
+				#title-bloc>img {
+					height: 20vh;
+					margin: 30px;
+					image-rendering: pixelated;
+				}
+
+					.menu {
+						display: inline-block;
+						border-style: solid;
+						border-color: white;
+						border-width: 2px;
+					}
+
+					.menu>h2 {
+						margin: 30px;
+						cursor: pointer;
+					}
+
+						#main-menu>h2:hover {
+							background-color: white;
+							color: black;
+						}
+
+						#controls-menu {
+							display: none;
+						}
+
+							#controls-menu>img {
+								min-width: 350px;
+								margin: 15px;
+							}
+
+							#controls-menu>p {
+								margin: 15px;
+							}
+
+						#credits-menu {
+							display: none;
+						}
+
+		#gameover-overlay {
+			display: none;
+		}
+
+			#fail-menu {
+				display: none;
+			}
+
+			#win-menu {
+				display: none;
+			}
+
+			#restart-button {
+				padding: 10px;
+				border-style: solid;
+				border-width: 2px;
+				color: white;
+				margin: 30px;
+			}
+
+			#restart-button:hover {
+				background-color: white;
+				color: black;
+			}
+
+
+	</style>
+
+	<script src="./js/libs/three.js"></script>
+	<script src="./js/libs/stats.min.js"></script>
+	<script src="./js/libs/OrbitControls.js"></script>
+	<script src="./js/libs/SpriteMixer.js"></script>
+
+	<script src="./js/Atlas.js"></script>
+	<script src="./js/AtlasHelper.js"></script>
+	<script src="./js/SquareHelper.js"></script>
+	<script src="./js/Keys.js"></script>
+	<script src="./js/Controler.js"></script>
+	<script src="./js/SceneGenerator.js"></script>
+	<script src="./js/Chaser.js"></script>
+	<script src="./js/Game.js"></script>
+	<script src="./js/SprControler.js"></script>
+	<script src="./js/Treasures.js"></script>
+
+
+</head>
+
+
+<body>
+
+
+
+
+	<div id="title-overlay" class="overlay">
+		<div id="title-bloc" class="bloc">
+
+			<h1>the Temple of Doom</h1>
+			<img src="./assets/title_screen.png">
+
+			<div id="back-container">
+
+				<h2 id="back-button" onclick="onClickBack()">
+					<p>< back</p>
+				</h2>
+				
+				<div id="main-menu" class="menu">
+					<h2 id="play-button" onclick="onClickPlay()">play</h2>
+					<h2 onclick="onClickControls()" >controls</h2>
+					<h2 onclick="onClickCredits()" >credits</h2>
+				</div>
+
+				<div id="controls-menu" class="menu">
+					<img src="./assets/controls.png">
+					<p>This game is not adapted for touchscreen</p>
+				</div>
+
+				<div id="credits-menu" class="menu">
+					<h2>Designed and created by Felix Mariotto</h2>
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+	
+
+
+
+
+	<div id="gameover-overlay" class="overlay">
+		<div id="gameover-bloc" class="bloc">
+			
+			<div id="fail-menu" class="menu">
+				<h2>Game over</h2>
+				<h2 id="fail-time-text">You survived 0 second</h2>
+			</div>
+
+			<div id="win-menu" class="menu">
+				<h2>Congratulations !</h2>
+				<h2 id="win-time-text">You finished the game in 265 seconds</h2>
+				<h2 id="loot-text">You looted 0 / 9 gems</h2>
+			</div>
+			
+			<h2 id="restart-button" onclick="onClickRestart()">restart (press space) ></h2>
+
+		</div>
+	</div>
+
+
+
+
+
+	<div id="inventory">
+		<div class="inventory-item">
+			<p id="inventory-count">0 / 10</p>
+		</div>
+	</div>
+
+
+
+
+	<canvas id="world"></canvas>
+
+
+
+
+	<script type="text/javascript">
+		
+		var scene, camera, renderer, controls, stats, spriteMixer, clock ;
+		var atlas, square, squareHelper, textureLoader, treasures;
+		var controler, keys, sceneGenerator, chaser, game, startup, sprControler;
+		var gamePaused, gameFinished;
+		var survivalTimeCounter = 0 ;
+		
+
+
+
+		function onClickPlay() {
+			startGame();
+		};
+
+
+		function onClickBack() {
+			document.getElementById('main-menu').style.display = 'inline-block' ;
+			document.getElementById('credits-menu').style.display = 'none' ;
+			document.getElementById('controls-menu').style.display = 'none' ;
+			document.getElementById('back-button').style.display = 'none' ;
+		}
+
+
+		function onClickControls() {
+			document.getElementById('main-menu').style.display = 'none' ;
+			document.getElementById('credits-menu').style.display = 'none' ;
+			document.getElementById('controls-menu').style.display = 'inline-block' ;
+			document.getElementById('back-button').style.display = 'inline-block' ;
+		};
+
+
+		function onClickCredits() {
+			document.getElementById('main-menu').style.display = 'none' ;
+			document.getElementById('credits-menu').style.display = 'inline-block' ;
+			document.getElementById('controls-menu').style.display = 'none' ;
+			document.getElementById('back-button').style.display = 'inline-block' ;
+		};
+
+
+		window.addEventListener('keydown', (e)=> {
+
+			if (e.key == 'Escape') {
+				if ( gamePaused ) {
+					onClickBack();
+					startGame();
+				} else {
+					pauseGame();
+				};
+			};
+
+			if (e.key == " " && gameFinished) {
+				onClickRestart();
+			};
+
+		});
+
+
+		function pauseGame() {
+			document.getElementById('inventory').style.display = 'none' ;
+			document.getElementById('title-overlay').style.display = 'inherit' ;
+			gamePaused = true ;
+		};
+
+
+		function onClickRestart() {
+			document.getElementById('gameover-overlay').style.display = "none" ;
+			game.restartGame();
+			startGame();
+		};
+
+
+		function startGame() {
+			document.getElementById('play-button').innerHTML = 'resume (esc)';
+			document.getElementById('inventory').style.display = 'flex' ;
+			document.getElementById('title-overlay').style.display = 'none' ;
+			document.getElementById('title-overlay').style.backgroundColor = 'rgba(0, 0, 0, 0.4)' ;
+			gamePaused = false ;
+			gameFinished = false ;
+
+			if ( !scene ) {
+				init();
+			} else {
+				loop();
+				// requestAnimationFrame( loop );
+			};
+		};
+
+
+
+		
+
+
+
+		function init() {
+
+			scene = new THREE.Scene();
+			scene.background = new THREE.Color(0x2e281a);
+			scene.fog = new THREE.Fog(0x000000, 16, 24);
+
+			var ambientlight = new THREE.AmbientLight( 0x404040, 1 );
+			var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+			directionalLight.position.set( 0.2, 1, 0.4 )
+			scene.add( ambientlight, directionalLight );
+
+
+			camera = new THREE.PerspectiveCamera( 20, window.innerWidth/window.innerHeight, 1, 1000 );
+
+			// controls = new THREE.OrbitControls( camera, document.body );
+
+			renderer = new THREE.WebGLRenderer({ canvas:document.getElementById('world')});
+			renderer.setPixelRatio( 1 );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+
+			stats = new Stats();
+			// document.body.appendChild( stats.dom );
+
+			clock = new THREE.Clock();
+
+			textureLoader = new THREE.TextureLoader();
+
+
+
+			/// GAME RELATED
+
+			atlas = Atlas();
+			atlas.initVectors();
+
+			keys = Keys();
+			keys.init();
+
+			sceneGenerator = SceneGenerator( atlas.pointsArrays );
+			// sceneGenerator.generateShapes();
+			sceneGenerator.generateExtrusions( true );
+			sceneGenerator.generateRoof( atlas.roof );
+
+			// let atlasHelper = AtlasHelper( atlas.pointsArrays );
+			// scene.add( atlasHelper );
+
+			square = atlas.LogicSquare( 0.5, 0.75 );
+
+			// square.helper = SquareHelper( square );
+			square.camera = camera ;
+			// scene.add( square.helper );
+
+			controler = Controler( square );
+
+			chaser = Chaser( square, true );
+
+			sprControler = SprControler();
+
+			treasures = Treasures();
+
+
+
+
+			/// START
+
+			game = Game();
+			loop();
+
+		};
+
+
+
+
+
+		var delta ;
+
+		function loop() {
+			if ( !gamePaused ) {
+
+				requestAnimationFrame( loop );
+				renderer.render( scene, camera );
+
+				stats.update();
+
+				delta = clock.getDelta();
+
+				if ( survivalTimeCounter > 0 ) {
+					survivalTimeCounter += delta ;
+					// console.log(survivalTimeCounter)
+				};
+
+				controler.update( delta );
+				chaser.update( delta );
+				spriteMixer.update( delta );
+
+			};
+		};
+
+
+	</script>
+
+</body>
+</html>
